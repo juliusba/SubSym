@@ -5,7 +5,7 @@ Created on 31. jan. 2013
 '''
 
 def oneMax(individ):
-    fitnessMeasure = 0
+    fitnessMeasure = 0.0
     for i in range (0, len(individ.genotype)):
         if individ.genotype[i] == 1:
             fitnessMeasure += 1

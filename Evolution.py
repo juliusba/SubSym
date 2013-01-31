@@ -2,81 +2,83 @@ import math
 import random
 import FitnessMeasure
 import sys
-import operator
 from Individ import Individ
-from ctypes.wintypes import DOUBLE
 
 class Evolution:
-    '''
-    individs = []
-    
-    p = int
-    m = int
-    n = int
-    populationSize = int
-    
-    fitnessMean = float
-    fitnessSD = float
-    '''
-    def __init__(self, fitnessMeasure, m = 10, n = 20, p = 2):
+
+    def __init__(self, fitnessMeasure, m = 5, n = 20, p = 2):
         self.m = m
         self.n = n
         self.p = p
         self.populationSize = m + n
-        self.individs = []
-        for i in range (0, self.populationSize):
+        self.childPool = []
+        self.adultPool = []
+        self.fitnessMean = 0.0
+        self.fitnessSD = 0.0
+        self.fitnessMeasure = fitnessMeasure
+        for i in range (0, self.n):
             individ = Individ(fitnessMeasure)
-            self.individs.append(individ)
+            self.childPool.append(individ)
     
-    def generationStep(self, fitnessMeasure):
-        for i in range(0, len(self.individs)):
-            self.fitnessMean += self.individs[i].fitness
-        self.fitnessMean /= len(self.individs)
+    def generationStep(self):
+        self.adultSelection()
+        self.mateSelection()
         
-        for i in range(0, len(self.individs)):
-            self.fitnessSD += math.pow((self.individs[i].fitness - self.fitnessMean), 2)
-        self.fitnessSD /= len(self.individs)
+        
+    def adultSelection(self):
+        
+        self.fitnessMean = 0.0
+        self.fitnessSD = 0.0
+        
+        for child in self.childPool:
+            self.adultPool.append(child)
+            self.childPool.remove(child)
+        
+        for i in range(0, len(self.adultPool)):
+            self.fitnessMean += self.adultPool[i].fitness
+        self.fitnessMean /= len(self.adultPool)
+        
+        for i in range(0, len(self.adultPool)):
+            self.fitnessSD += math.pow((self.adultPool[i].fitness - self.fitnessMean), 2)
+        self.fitnessSD /= len(self.adultPool)
         self.fitnessSD = math.pow(self.fitnessSD, 0.5)
         
-        self.mateSelection(fitnessMeasure)
-        self.adultSelection()
-            
-    def adultSelection(self):
-        self.individs.sort(cmp=Individ, key= operator.attrgetter('fitness'), reverse=False)
-        for individ in self.individs:
-            print individ.fitness
+        self.adultPool.sort(key=lambda individ: individ.fitness, reverse=True)
         
-    def mateSelection(self, fitnessMeasure):
+        while len(self.adultPool) > self.m:
+            self.adultPool.pop();
+        
+        
+    def mateSelection(self):
         for i in range(0, self.n):
             parents = []
             while len(parents) < 2:
                 ticket = random.random() * self.fitnessMean * self.populationSize
-                print ticket
-                for individ in self.individs:
+                for individ in self.adultPool:
                     ticket -= individ.fitness
                     if ticket <= 0:
                         if parents.count(individ) == 0:
                             parents.append(individ)
                         break
             
-            print len(parents)
-            child = Individ(fitnessMeasure, parents)
-            self.individs.append(child)
+            child = Individ(self.fitnessMeasure, parents)
+            self.childPool.append(child)
         
 
 if __name__ == '__main__':
     evolution = Evolution(FitnessMeasure.oneMax, 10, 20)
-    print "individs: " + str(len(evolution.individs))
-    print "genes: " + str(len(evolution.individs[0].genotype))
-    print "genotype: " + str(evolution.individs[2].genotype)
-    print "genotype: " + str(evolution.individs[3].genotype)
-    for i in range (0, 50):
-        evolution.generationStep(FitnessMeasure.oneMax)
+    print "genes: " + str(len(evolution.childPool[0].genotype))
+    print "genotype2: " + str(evolution.childPool[2].genotype)
+    print "genotype3: " + str(evolution.childPool[3].genotype)
+    print "fitness2: " + str(evolution.childPool[2].fitness)
+    print "fitness3: " + str(evolution.childPool[3].fitness)
+    for i in range (0, 12):
+        evolution.generationStep()
     
-    print "individs: " + str(len(evolution.individs))
-    print "genes: " + str(len(evolution.individs[0].genotype))
-    print "genotype: " + str(evolution.individs[2].genotype)
-    print "genotype: " + str(evolution.individs[3].genotype)
+    print "individs: " + str(len(evolution.childPool) + len(evolution.adultPool))
+    print "genes: " + str(len(evolution.adultPool[0].genotype))
+    print "genotype: " + str(evolution.adultPool[2].genotype)
+    print "genotype: " + str(evolution.adultPool[3].genotype)
     
     sys.stdin.readline()
     
