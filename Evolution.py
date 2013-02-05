@@ -17,7 +17,7 @@ class Evolution:
         self.fitnessSD = 0.0
         self.fitnessMeasure = fitnessMeasure
         for i in range (0, self.n):
-            individ = Individ(fitnessMeasure)
+            individ = Individ(fitnessMeasure, 20)
             self.childPool.append(individ)
     
     def generationStep(self):
@@ -61,24 +61,24 @@ class Evolution:
                             parents.append(individ)
                         break
             
-            child = Individ(self.fitnessMeasure, parents)
+            child = Individ(self.fitnessMeasure, 20, parents)
             self.childPool.append(child)
         
 
 if __name__ == '__main__':
     evolution = Evolution(FitnessMeasure.oneMax, 10, 20)
-    print "genes: " + str(len(evolution.childPool[0].genotype))
-    print "genotype2: " + str(evolution.childPool[2].genotype)
-    print "genotype3: " + str(evolution.childPool[3].genotype)
-    print "fitness2: " + str(evolution.childPool[2].fitness)
-    print "fitness3: " + str(evolution.childPool[3].fitness)
+    print ("genes: " + str(len(evolution.childPool[0].genotype)))
+    print ("genotype2: " + str(evolution.childPool[2].genotype))
+    print ("genotype3: " + str(evolution.childPool[3].genotype))
+    print ("fitness2: " + str(evolution.childPool[2].fitness))
+    print ("fitness3: " + str(evolution.childPool[3].fitness))
     for i in range (0, 12):
         evolution.generationStep()
     
-    print "individs: " + str(len(evolution.childPool) + len(evolution.adultPool))
-    print "genes: " + str(len(evolution.adultPool[0].genotype))
-    print "genotype: " + str(evolution.adultPool[2].genotype)
-    print "genotype: " + str(evolution.adultPool[3].genotype)
+    print ("individs: " + str(len(evolution.childPool) + len(evolution.adultPool)))
+    print ("genes: " + str(len(evolution.adultPool[0].genotype)))
+    print ("genotype: " + str(evolution.adultPool[2].genotype))
+    print ("genotype: " + str(evolution.adultPool[3].genotype))
     
     sys.stdin.readline()
     
