@@ -31,3 +31,6 @@ class Individ(object):
                 self.genotype.append(gen)
         
         self.fitness = fitnessMeasure(self)
+
+    def lol():
+        pass
