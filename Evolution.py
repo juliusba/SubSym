@@ -66,6 +66,13 @@ class Evolution:
         
 
 if __name__ == '__main__':
+    #print (Individ.integerToBinary(3, 5))
+    #print (Individ.binaryToInteger([0,0,0,1,1]))
+    print (Individ.binaryToGray([1,1,0]))
+    print (Individ.grayToBinary([1,0,1]))
+    print (Individ.integerToGrey(6, 3))
+
+    '''
     evolution = Evolution(FitnessMeasure.oneMax, 10, 20)
     print ("genes: " + str(len(evolution.childPool[0].genotype)))
     print ("genotype2: " + str(evolution.childPool[2].genotype))
@@ -79,7 +86,5 @@ if __name__ == '__main__':
     print ("genes: " + str(len(evolution.adultPool[0].genotype)))
     print ("genotype: " + str(evolution.adultPool[2].genotype))
     print ("genotype: " + str(evolution.adultPool[3].genotype))
-    
-    sys.stdin.readline()
-    
-        
+    '''
+    sys.stdin.readline()  

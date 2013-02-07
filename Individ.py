@@ -5,7 +5,7 @@ Created on 31. jan. 2013
 '''
 import random
 import math
-from ctypes.wintypes import DOUBLE
+import array
 
 class Individ(object):
 
@@ -30,51 +30,68 @@ class Individ(object):
         self.fitness = fitnessMeasure(self)
 
 
-    def integerToBinary(integer):
-        return "{0:b}".format(integer)
+    def integerToBinary(integer, bits):
+        bin = []
+        while(bits >=1):
+            if integer >= math.pow(2, bits -1):
+                bin.append(1)
+                integer -= math.pow(2, bits -1)
+            else:
+                bin.append(0)
+            bits -= 1
+        return bin
 
     def binaryToInteger(b):
-        return int(b, 2)
+        integer = int(0)
+        bits = len(b)
+        for i in range(0, len(b)):
+            print (i)
+            if b[i] == 1:
+                integer += int(math.pow(2, bits - i -1))
+        return integer
 
     def binaryToGray(b):
-        temp = b >> 1
-        ret = []
-        for i in range (0, len(b)):
-            ret.append((b[i] + temp[i]) % 2)
-        return ret
+        g = [b[0]]
+        for i in range (1, len(b)):
+            g.append((b[i] + b[i-1]) % 2)
+        return g
 
     def grayToBinary(g):
-        shift = 1
-        while shift < len(g):
-            temp = b >> shift
-            ret = []
-            for i in range (0, len(b)):
-                ret.append((g[i] + temp[i]) % 2)
-            g = ret
-            shift *= 2
+        b = [g[0]]
+        for i in range (1, len(g)):
+            b.append((b[i-1] + g[i]) % 2)
+        return b
 
-class Phenotype:
+    def integerToGrey(integer, bits):
+        b = Individ.integerToBinary(integer, bits)
+        return Individ.binaryToGray(b)
 
-    def __init__(self, genotype, gray = false):
-        if gray:
-            self.genotype = genotype
-            self.val = 0
-            for i in range (0, len(genotype)):
-                self.val += genotype[i] * math.pow(2, i-1)
-        else:
-            self.val = 0
+    def greyToInteger(g):
+        b = Individ.grayToBinary(g)
+        return Individ.binaryToInteger(b)
+
+#class Phenotype:
+
+#    def __init__(self, genotype, gray = false):
+#        if gray:
+#            self.genotype = genotype
+#            self.val = 0
+#            for i in range (0, len(genotype)):
+#                self.val += genotype[i] * math.pow(2, i-1)
+#        else:
+#            self.val = 0
 
 
-    def __init__(self, geneCount, val):
-        self.val = val
-        self.geneCount = geneCount
-        self.genotype = []
-        for i in range (0, geneCount):
-            if math.pow(2, geneCount - i - 1) < val:
-                self.genotype.append(1)
-                val -= math.pow(2, geneCount - i - 1)
-            else:
-                self.genotype.append(0)
+#    def __init__(self, geneCount, val):
+#        self.val = val
+#        self.geneCount = geneCount
+#        self.genotype = []
+#        for i in range (0, geneCount):
+#            if math.pow(2, geneCount - i - 1) < val:
+#                self.genotype.append(1)
+#                val -= math.pow(2, geneCount - i - 1)
+#            else:
+#                self.genotype.append(0)
 
 
 
