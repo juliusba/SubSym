@@ -6,28 +6,37 @@ Created on 31. jan. 2013
 import random
 import math
 import array
+import sys
 
 class Individ(object):
 
-    def __init__(self, fitnessMeasure, blueprint, parents = []):
-
-        self.genotype = []
+    def __init__(self, blueprint, parents = []):
+        self.fitness = 0
+        self.dna = []
         if parents == []:
             for i in range (0,len(blueprint)):
-                self.genotype.append([])
-                for j in range (0, blueprint[i]):
-                    self.genotype[i].append(random.randint(0,1))
+                self.dna.append(Phenotype(blueprint[i]))
         else:
-            for i in range (0, len(parents[0].genotype)):
-                self.genotype.append([])
-                for j in range (0, len(parents[0].genotype[i])):
-                    if random.random() < 0.01:
-                        gen = random.randint(0,1)
-                    else:
-                        gen = parents[random.randint(0, len(parents)-1)].genotype[i]
-                    self.genotype.append(gen)
-        
-        self.fitness = fitnessMeasure(self)
+            for i in range (0, len(parents[0].dna)):
+                parentsPheno = []
+                for j in range (0,len(parents)):
+                    parentsPheno.append(parents[j].dna[i])
+                self.dna.append(Phenotype(blueprint[i], parentsPheno))
+
+class Phenotype:
+
+    def __init__(self, bits, parents = [], gray = False):
+        self.genotype = []
+        if parents == []:
+            for i in range (0, bits):
+                self.genotype.append(random.randint(0,1))
+        else:
+            for i in range (0, bits):
+                self.genotype.append(parents[random.randint(0, len(parents)-1)])
+        if gray:
+            self.val = Phenotype.grayToInteger(self.genotype)
+        else:
+            self.val = Phenotype.binaryToInteger(self.genotype)
 
 
     def integerToBinary(integer, bits):
@@ -45,7 +54,6 @@ class Individ(object):
         integer = int(0)
         bits = len(b)
         for i in range(0, len(b)):
-            print (i)
             if b[i] == 1:
                 integer += int(math.pow(2, bits - i -1))
         return integer
@@ -62,36 +70,16 @@ class Individ(object):
             b.append((b[i-1] + g[i]) % 2)
         return b
 
-    def integerToGrey(integer, bits):
-        b = Individ.integerToBinary(integer, bits)
-        return Individ.binaryToGray(b)
+    def integerToGray(integer, bits):
+        b = Phenotype.integerToBinary(integer, bits)
+        return Phenotype.binaryToGray(b)
 
-    def greyToInteger(g):
-        b = Individ.grayToBinary(g)
-        return Individ.binaryToInteger(b)
+    def grayToInteger(g):
+        b = Phenotype.grayToBinary(g)
+        return Phenotype.binaryToInteger(b)
 
-#class Phenotype:
+if __name__ == '__main__':
+    for i in range (10, 0, -1):
+        print (i)
 
-#    def __init__(self, genotype, gray = false):
-#        if gray:
-#            self.genotype = genotype
-#            self.val = 0
-#            for i in range (0, len(genotype)):
-#                self.val += genotype[i] * math.pow(2, i-1)
-#        else:
-#            self.val = 0
-
-
-#    def __init__(self, geneCount, val):
-#        self.val = val
-#        self.geneCount = geneCount
-#        self.genotype = []
-#        for i in range (0, geneCount):
-#            if math.pow(2, geneCount - i - 1) < val:
-#                self.genotype.append(1)
-#                val -= math.pow(2, geneCount - i - 1)
-#            else:
-#                self.genotype.append(0)
-
-
-
+    sys.stdin.readline()
