@@ -19,15 +19,12 @@ class Evolution:
         self.fitnessSD = 0.0
 
     def run(self):
-        for i in range (self.stopAfterGen):
-            self.generationStep()
-        
-        print ("Populationsize: " + str(len(self.individs)))
-        print ("Mean fitness: " + str(self.fitnessMean))
-        print ("SD in fitness: " + str(self.fitnessSD))
-        print ("Best fitness: " + str(self.fitnessBest.fitness))
-                
-        if sys.stdin.readline() == 'y':
+        print("\nPlease wright the number of generations you wish to add, or press enter to exit.")
+        answer = sys.stdin.readline()[:-1]
+        if answer != "":
+            for i in range (int(answer)):
+                self.generationStep()
+            self.print()
             self.run()
 
     def generationStep(self):
@@ -55,20 +52,32 @@ class Evolution:
         
         
     def mateSelection(self):
+        picked = []
         for i in range(0, self.n):
             parents = []
-            while len(parents) < 2:
+            while len(parents) < self.p:
                 ticket = random.random() * self.fitnessMean * self.populationSize
                 for individ in self.individs:
                     ticket -= individ.fitness
                     if ticket <= 0:
-                        if parents.count(individ) == 0:
+                        if parents.count(individ) == 0 and picked.count(individ) == 0:
                             parents.append(individ)
                         break
             
             child = self.individType(parents)
+            resourceDistrib = "| "
+            for battleProportion in child.resourceDistrib:
+                resourceDistrib += str(round(battleProportion, 2)) + " | "
+            #print(resourceDistrib)
             self.individs.append(child)
+
+            picked.append(parents)
         
+    def print(self):
+        print ("Populationsize: " + str(len(self.individs)))
+        print ("Mean fitness: " + str(round(self.fitnessMean, 2)))
+        print ("SD in fitness: " + str(round(self.fitnessSD, 2)))
+        print ("Best fitness: " + str(round(self.fitnessBest.fitness, 2)))
 
 if __name__ == '__main__':
     sys.stdin.readline()  

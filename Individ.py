@@ -32,7 +32,10 @@ class Phenotype:
                 self.genotype.append(random.randint(0,1))
         else:
             for i in range (0, bits):
-                self.genotype.append(parents[random.randint(0, len(parents)-1)])
+                if random.random() > 1 - 0.1:
+                    self.genotype.append(random.randint(0,1))
+                else:
+                    self.genotype.append(parents[random.randint(0, len(parents)-1)].genotype[i])
         if gray:
             self.val = Phenotype.grayToInteger(self.genotype)
         else:
