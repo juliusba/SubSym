@@ -1,15 +1,14 @@
 import math
 import random
-import FitnessMeasure
 import sys
-import Individ
+from Individ import Individ
 from operator import attrgetter
 from Individ import Phenotype
 
 class Evolution:
 
-    def __init__(self, stopAfterGen = 1, m = 5, n = 20, p = 2):
-        self.stopAfterGen = stopAfterGen
+    def __init__(self, gray = False, m = 5, n = 20, p = 2):
+        self.gray = gray
         self.m = m
         self.n = n
         self.p = p
@@ -32,11 +31,14 @@ class Evolution:
         self.mateSelection()
 
     def adultSelection(self):
+        self.fitnessMean = 0.0
+        self.fitnessSD = 0.0
+        for individ in self.individs:
+            individ.fitness = 0
+
         self.fitnessTest()
         self.fitnessBest = max(self.individs, key = attrgetter('fitness'))
         
-        self.fitnessMean = 0.0
-        self.fitnessSD = 0.0
         for i in range(0, len(self.individs)):
             self.fitnessMean += self.individs[i].fitness
         self.fitnessMean /= len(self.individs)
@@ -64,11 +66,7 @@ class Evolution:
                             parents.append(individ)
                         break
             
-            child = self.individType(parents)
-            resourceDistrib = "| "
-            for battleProportion in child.resourceDistrib:
-                resourceDistrib += str(round(battleProportion, 2)) + " | "
-            #print(resourceDistrib)
+            child = self.individType(parents, self.gray)
             self.individs.append(child)
 
             picked.append(parents)

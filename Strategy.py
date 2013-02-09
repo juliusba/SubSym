@@ -1,12 +1,12 @@
 from Individ import Individ
 
 class Strategy(Individ):
-    
-    B = 10
-    blueprint = [4] * B
 
-    def __init__(self, parents = []):
-        super().__init__(Strategy.blueprint, parents)
+    B = 10
+    Blueprint = [4] * B
+
+    def __init__(self, parents = [], gray = False):
+        super().__init__(Strategy.Blueprint, parents, gray)
         self.resourceDistrib = []
         sum = 0
         for pheno in self.dna:
@@ -16,4 +16,4 @@ class Strategy(Individ):
                 self.resourceDistrib.append(float(pheno.val) / sum)
         else:
             for pheno in self.dna:
-                self.resourceDistrib.append(1 / len(self.dna))
+                self.resourceDistrib.append(1.0 / len(self.dna))

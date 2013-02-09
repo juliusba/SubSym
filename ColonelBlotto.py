@@ -4,19 +4,20 @@ from Evolution import Evolution
 
 class ColonelBlotto(Evolution):
 
-    def __init__(self, stopAfterGen = 1, RF = 0.0, LF = 0.0, B = 10, m = 10, n = 20, p = 2):
-        super().__init__(stopAfterGen, m, n, p)
+    def __init__(self, gray = True, RF = 0.0, LF = 0.0, B = 10, m = 10, n = 20, p = 2):
+        super().__init__(gray, m, n, p)
         self.RF = RF
         self.LF = LF
         self.B = B
+        Strategy.B = B
         for i in range (self.populationSize):
-            self.individs.append(Strategy())
+            self.individs.append(Strategy([], self.gray))
 
         self.individType = Strategy
 
     def fitnessTest(self):
         for i in range (0, len(self.individs)):
-            self.individs[i].fitness = 0
+            #self.individs[i].fitness = 0
             for j in range (len(self.individs) - 1, i, -1):
                 res = self.runWar([self.individs[i], self.individs[j]])
                 if res == [0]:
@@ -69,6 +70,6 @@ class ColonelBlotto(Evolution):
 
 if __name__ == '__main__':
     
-    colonelBlotto = ColonelBlotto(10, 0.3, 0.3)
+    colonelBlotto = ColonelBlotto(True, 0.3, 0.3)
 
     colonelBlotto.run()

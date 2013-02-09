@@ -10,18 +10,18 @@ import sys
 
 class Individ(object):
 
-    def __init__(self, blueprint, parents = []):
+    def __init__(self, blueprint, parents = [], gray = False):
         self.fitness = 0
         self.dna = []
         if parents == []:
             for i in range (0,len(blueprint)):
-                self.dna.append(Phenotype(blueprint[i]))
+                self.dna.append(Phenotype(blueprint[i], [], gray))
         else:
             for i in range (0, len(parents[0].dna)):
                 parentsPheno = []
                 for j in range (0,len(parents)):
                     parentsPheno.append(parents[j].dna[i])
-                self.dna.append(Phenotype(blueprint[i], parentsPheno))
+                self.dna.append(Phenotype(blueprint[i], parentsPheno, gray))
 
 class Phenotype:
 
