@@ -69,7 +69,6 @@ class ColonelBlotto(Evolution):
         print (resourceDistrib)
 
 if __name__ == '__main__':
-    
     colonelBlotto = ColonelBlotto(True, 1.0, 0.0)
 
     colonelBlotto.run()

@@ -1,8 +1,10 @@
 import math
-import random
+import random as rnd
 import sys
 from operator import attrgetter
 import io,json
+from pylab import *
+import numpy as np
 
 from Individ import Individ
 from Individ import Phenotype
@@ -77,7 +79,7 @@ class Evolution:
         for i in range(0, self.n):
             parents = []
             while len(parents) < self.p:
-                ticket = random.random() * self.fitnessMean * self.populationSize
+                ticket = rnd.random() * self.fitnessMean * self.populationSize
                 for individ in self.individs:
                     ticket -= individ.fitness
                     if ticket <= 0:
