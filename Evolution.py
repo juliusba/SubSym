@@ -3,7 +3,7 @@ import random as rnd
 import sys
 from operator import attrgetter
 import io,json
-from pylab import *
+import matplotlib.pyplot as p
 import numpy as np
 
 from Individ import Individ
@@ -35,13 +35,32 @@ class Evolution:
         self.populationSize = Evolution.m + Evolution.n
         self.fitnessMean = 0.0
         self.fitnessSD = 0.0
+        self.meanFitness = [0]
+        self.SDinFitness = [0]
+        self.BestFitness = [0]
 
     def run(self):
         print("\nPlease wright the number of generations you wish to add, or press enter to exit.")
         answer = sys.stdin.readline()[:-1]
+        
         if answer != "":
             for i in range (int(answer)):
                 self.generationStep()
+                self.meanFitness.append(str(round(self.fitnessMean, 2)))
+                self.SDinFitness.append(str(round(self.fitnessSD, 2)))
+                self.BestFitness.append(str(round(self.fitnessBest.fitness, 2)))
+
+            l1 = p.plot(self.meanFitness, 'b')
+            l2 = p.plot(self.SDinFitness, 'g')
+            l3 = p.plot (self.BestFitness, 'r')
+        
+            p.legend(('mean','SD','Best'))
+            p.xlabel('Generation')
+            p.ylabel('Value')
+            p.title('Graph')
+            p.grid(True)
+            p.savefig('Graph.png')
+
             self.print()
             self.run()
 
@@ -132,6 +151,7 @@ class Evolution:
             self.individs[i].expVal = Evolution.Rank_Min + (Evolution.Rank_Max - Evolution.Rank_Min) * (((len(self.individs) - 1) - i + 1) / (len(self.individs) - 1))
 
     def print(self):
+        
         print ("Populationsize: " + str(len(self.individs)))
         print ("Mean fitness: " + str(round(self.fitnessMean, 2)))
         print ("SD in fitness: " + str(round(self.fitnessSD, 2)))

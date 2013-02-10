@@ -1,12 +1,13 @@
 from Evolution import Evolution
 from BinaryVector import BinaryVector
+import matplotlib.pyplot as p
 
 class OneMax(Evolution):
     
 
 
     def __init__(self):
-        super().__init__(False, m, n, p)
+        super().__init__()
 
         for i in range (self.populationSize):
             self.individs.append(BinaryVector())
@@ -24,5 +25,4 @@ class OneMax(Evolution):
 if __name__ == '__main__':
     
     oneMax = OneMax()
-
     oneMax.run()

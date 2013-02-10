@@ -1,6 +1,9 @@
 import math
 from Strategy import *
 from Evolution import Evolution
+#import pylab as p
+import matplotlib.pyplot as p
+import numpy as np
 
 class ColonelBlotto(Evolution):
 
@@ -80,5 +83,4 @@ if __name__ == '__main__':
     ColonelBlotto.B = 10
 
     colonelBlotto = ColonelBlotto()
-
     colonelBlotto.run()
