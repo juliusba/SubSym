@@ -47,7 +47,7 @@ class ColonelBlotto(Evolution):
                     for k in range(0, j):
                         temp[k].battlePoints += 1.0 / (j + 1)
                     for p in range(j, len(strategies)):
-                        temp[k].strength -= self.LF
+                        temp[k].strength *= (1 - self.LF)
 
         warWinners = [0]
         for i in range (1, len(strategies)):
@@ -70,6 +70,6 @@ class ColonelBlotto(Evolution):
 
 if __name__ == '__main__':
     
-    colonelBlotto = ColonelBlotto(True, 0.3, 0.3)
+    colonelBlotto = ColonelBlotto(True, 1.0, 0.0)
 
     colonelBlotto.run()
