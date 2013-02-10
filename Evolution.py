@@ -14,6 +14,8 @@ class Evolution:
     m = 5   #number of grownups for mateselection
     n = 20  #number of children in population
     p = 2   #number of parents per child
+
+
     
     gray = False
 
@@ -29,13 +31,20 @@ class Evolution:
         self.populationSize = m + n
         self.fitnessMean = 0.0
         self.fitnessSD = 0.0
+        self.meanFitness = [0]
+        self.SDinFitness = [0]
+        self.BestFitness = [0]
 
     def run(self):
         print("\nPlease wright the number of generations you wish to add, or press enter to exit.")
         answer = sys.stdin.readline()[:-1]
+        
         if answer != "":
             for i in range (int(answer)):
                 self.generationStep()
+                self.meanFitness.append(str(round(self.fitnessMean, 2)))
+                self.SDinFitness.append(str(round(self.fitnessSD, 2)))
+                self.BestFitness.append(str(round(self.fitnessBest.fitness, 2)))
             self.print()
             self.run()
 
@@ -93,6 +102,7 @@ class Evolution:
             picked.append(parents)
         
     def print(self):
+        
         print ("Populationsize: " + str(len(self.individs)))
         print ("Mean fitness: " + str(round(self.fitnessMean, 2)))
         print ("SD in fitness: " + str(round(self.fitnessSD, 2)))

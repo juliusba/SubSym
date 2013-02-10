@@ -1,6 +1,9 @@
 import math
 from Strategy import Strategy
 from Evolution import Evolution
+#import pylab as p
+import matplotlib.pyplot as p
+import numpy as np
 
 class ColonelBlotto(Evolution):
 
@@ -67,8 +70,19 @@ class ColonelBlotto(Evolution):
             resourceDistrib += str(pheno.val) + " | "
         resourceDistrib.strip()
         print (resourceDistrib)
+        
+        l1 = p.plot(colonelBlotto.meanFitness, 'b')
+        l2 = p.plot(colonelBlotto.SDinFitness, 'g')
+        l3 = p.plot (colonelBlotto.BestFitness, 'r')
+        
+        p.legend(('mean','SD','Best'))
+        p.xlabel('Generation')
+        p.ylabel('Value')
+        p.title('Graph')
+        p.grid(True)
+        p.savefig('Graph.png')
 
 if __name__ == '__main__':
     colonelBlotto = ColonelBlotto(True, 1.0, 0.0)
-
+    p.savefig('Graph.png') #cler image
     colonelBlotto.run()
