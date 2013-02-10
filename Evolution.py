@@ -1,6 +1,8 @@
 import math
 import random
 import sys
+from pylab import *
+import numpy
 from Individ import Individ
 from operator import attrgetter
 from Individ import Phenotype
@@ -78,4 +80,12 @@ class Evolution:
         print ("Best fitness: " + str(round(self.fitnessBest.fitness, 2)))
 
 if __name__ == '__main__':
+    #x = [1,2,3]
+    #y = [4,6,5]
+    #pylab.plot(x,y)
+    #pylab.show()
+    print("lol")
+    plot([1,2,3,4], [1,4,9,16])
+    savefig('wykresik.png')
+
     sys.stdin.readline()  
