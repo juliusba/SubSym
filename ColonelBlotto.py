@@ -1,15 +1,16 @@
 import math
-from Strategy import Strategy
+from Strategy import *
 from Evolution import Evolution
 
 class ColonelBlotto(Evolution):
 
-    def __init__(self, gray = True, RF = 0.0, LF = 0.0, B = 10, m = 10, n = 20, p = 2):
-        super().__init__(gray, m, n, p)
-        self.RF = RF
-        self.LF = LF
-        self.B = B
-        Strategy.B = B
+    RF = 0.0
+    LF = 0.0
+    B = 10
+
+    def __init__(self):
+        super().__init__()
+        Strategy.B = ColonelBlotto.B
         for i in range (self.populationSize):
             self.individs.append(Strategy([], self.gray))
 
@@ -69,6 +70,15 @@ class ColonelBlotto(Evolution):
         print (resourceDistrib)
 
 if __name__ == '__main__':
-    colonelBlotto = ColonelBlotto(True, 1.0, 0.0)
+    Evolution.gray = True
+    Evolution.m = 10
+    Evolution.n = 20
+    Evolution.p = 2
+
+    ColonelBlotto.RF = 1.0
+    ColonelBlotto.LF = 0.0
+    ColonelBlotto.B = 10
+
+    colonelBlotto = ColonelBlotto()
 
     colonelBlotto.run()

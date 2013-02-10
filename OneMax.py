@@ -3,7 +3,9 @@ from BinaryVector import BinaryVector
 
 class OneMax(Evolution):
     
-    def __init__(self, m = 5, n = 20, p = 2):
+
+
+    def __init__(self):
         super().__init__(False, m, n, p)
 
         for i in range (self.populationSize):
