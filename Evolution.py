@@ -21,7 +21,8 @@ class Evolution:
     p = 2   #number of parents per child
     
     gray = False
-    elitismFactor = 0.2
+    elitismFactor = 1.0
+    tournamentCount = 1
 
     selectionStrategy = SelectionStrategy.Sigma
     
@@ -32,7 +33,7 @@ class Evolution:
 
     def __init__(self):
         self.individs = []
-        self.populationSize = Evolution.m + Evolution.n
+        #self.populationSize = Evolution.m + Evolution.n
         self.fitnessMean = 0.0
         self.fitnessSD = 0.0
         self.meanFitness = [0]
@@ -42,9 +43,10 @@ class Evolution:
     def run(self):
         print("\nPlease wright the number of generations you wish to add, or press enter to exit.")
         answer = sys.stdin.readline()[:-1]
-        
+        print ("")
         if answer != "":
             for i in range (int(answer)):
+                print(str(round(i*100/int(answer))), end=" %\r")
                 self.generationStep()
                 self.meanFitness.append(str(round(self.fitnessMean, 2)))
                 self.SDinFitness.append(str(round(self.fitnessSD, 2)))
@@ -73,8 +75,23 @@ class Evolution:
         self.fitnessSD = 0.0
         for individ in self.individs:
             individ.fitness = 0
+        #    individ.tested = False
 
-        self.fitnessTest()
+        #tested = 0
+        #for i in range (0, Evolution.tournamentCount):
+        #    contesters = []
+        #    for j in range (0, math.ceil(len(self.individs)/Evolution.tournamentCount)):
+        #        while True:
+        #            index = rnd.randint(0, len(self.individs) - 1)
+        #            if self.individs[index].tested == False:
+        #                break
+        #        contesters.append(self.individs[index])
+        #        self.individs[index].tested = True
+        #        tested += 1
+        #        if tested == len(self.individs):
+        #            break
+        #    self.fitnessTest(contesters)
+        self.fitnessTest(self.individs)
         self.fitnessBest = max(self.individs, key = attrgetter('fitness'))
         
         for i in range(0, len(self.individs)):
@@ -84,7 +101,10 @@ class Evolution:
             self.fitnessSD += math.pow((self.individs[i].fitness - self.fitnessMean), 2)
         self.fitnessSD /= len(self.individs)
         self.fitnessSD = math.pow(self.fitnessSD, 0.5)
-        
+        if self.fitnessSD == 0:
+            print("No variation in fitness!")
+            sys.stdin.readline()
+
         #self.fitnessSDratio = self.fitnessSD / self.fitnessMean
         #if (self.fitnessSDratio > Evolution.maxSDration):
         #    for individ in self.individs:
@@ -100,12 +120,24 @@ class Evolution:
         
         
     def mateSelection(self):
-        self.expVal()
+        if Evolution.selectionStrategy == Evolution.SelectionStrategy.Sigma:
+            self.sigmaVal()
+        elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Boltz:
+            self.boltzVal()
+        elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Rank:
+            self.rankVal()
+
+        self.sumExpVal = 0
+        for individ in self.individs:
+            self.sumExpVal += individ.expVal
+            #print(str(individ.expVal) + " - " + str(individ.fitness))
+
         childPool = []
         for i in range(0, self.n):
             parents = []
             while len(parents) < self.p:
                 ticket = rnd.random() * self.sumExpVal
+                #print(ticket)
                 for individ in self.individs:
                     ticket -= individ.expVal
                     if ticket <= 0:
@@ -121,21 +153,10 @@ class Evolution:
 
         self.individs.extend(childPool)
 
-    def expVal(self):
-        if Evolution.selectionStrategy == Evolution.SelectionStrategy.Sigma:
-            self.sigmaVal()
-        elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Boltz:
-            self.boltzVal()
-        elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Rank:
-            self.rankVal()
-
-        self.sumExpVal = 0
-        for individ in self.individs:
-            self.sumExpVal += individ.expVal
-
     def sigmaVal(self):
         for individ in self.individs:
-            individ.expVal = 1 + (individ.fitness - self.fitnessMean) / (2 * self.fitnessSD)
+            individ.expVal = individ.fitness#(individ.fitness - self.fitnessMean) / (2 * self.fitnessSD)
+            #print(individ.expVal)
 
     def boltzVal(self):
         sumFitnessExp = 0
@@ -163,4 +184,4 @@ if __name__ == '__main__':
     #data = [ { 'a':'A', 'b':(2, 4), 'c':3.0 } ]
     #with io.open('data.txt', 'w', encoding='utf-8') as outfile:
     #    json.dump(c, outfile)
-    sys.stdin.readline()  
+    sys.stdin.readline()
