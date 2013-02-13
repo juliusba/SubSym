@@ -10,6 +10,8 @@ import sys
 
 class Individ(object):
 
+    mutationFraction = 0.01
+
     def __init__(self, blueprint, parents = [], gray = False):
         self.fitness = 0
         self.dna = []
@@ -32,7 +34,7 @@ class Phenotype:
                 self.genotype.append(random.randint(0,1))
         else:
             for i in range (0, bits):
-                if random.random() > 1 - 0.1:
+                if random.random() < Individ.mutationFraction:
                     self.genotype.append(random.randint(0,1))
                 else:
                     self.genotype.append(parents[random.randint(0, len(parents)-1)].genotype[i])

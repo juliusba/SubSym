@@ -9,13 +9,13 @@ class OneMax(Evolution):
     def __init__(self):
         super().__init__()
 
-        for i in range (self.populationSize):
+        for i in range (round(Evolution.m * Evolution.elitismFactor) + Evolution.n):
             self.individs.append(BinaryVector())
 
         self.individType = BinaryVector
 
-    def fitnessTest(self):
-        for individ in self.individs:
+    def fitnessTest(self, individs):
+        for individ in individs:
             for bit in individ.dna[0].genotype:
                 individ.fitness += bit
 
