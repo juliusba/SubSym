@@ -3,7 +3,7 @@ import random as rnd
 import sys
 from operator import attrgetter
 import io,json
-from pylab import *
+import matplotlib.pyplot as p
 import numpy as np
 
 from Individ import Individ
@@ -11,24 +11,28 @@ from Individ import Phenotype
 
 class Evolution:
 
+    class SelectionStrategy:
+        Sigma = 1
+        Boltz = 2
+        Rank = 3
+
     m = 5   #number of grownups for mateselection
     n = 20  #number of children in population
     p = 2   #number of parents per child
-
-
     
     gray = False
+    elitismFactor = 0.2
 
-    minSDratio = 0.1
-    maxSDration = 0.5
+    selectionStrategy = SelectionStrategy.Sigma
+    
+    Boltz_T = 2
+    Rank_Min = 0.5
+    Rank_Max = 1.5
 
-    def __init__(self, gray = False, m = 5, n = 20, p = 2):
-        self.gray = gray
-        self.m = m
-        self.n = n
-        self.p = p
+
+    def __init__(self):
         self.individs = []
-        self.populationSize = m + n
+        self.populationSize = Evolution.m + Evolution.n
         self.fitnessMean = 0.0
         self.fitnessSD = 0.0
         self.meanFitness = [0]
@@ -45,6 +49,18 @@ class Evolution:
                 self.meanFitness.append(str(round(self.fitnessMean, 2)))
                 self.SDinFitness.append(str(round(self.fitnessSD, 2)))
                 self.BestFitness.append(str(round(self.fitnessBest.fitness, 2)))
+
+            l1 = p.plot(self.meanFitness, 'b')
+            l2 = p.plot(self.SDinFitness, 'g')
+            l3 = p.plot (self.BestFitness, 'r')
+        
+            p.legend(('mean','SD','Best'))
+            p.xlabel('Generation')
+            p.ylabel('Value')
+            p.title('Graph')
+            p.grid(True)
+            p.savefig('Graph.png')
+
             self.print()
             self.run()
 
@@ -69,13 +85,13 @@ class Evolution:
         self.fitnessSD /= len(self.individs)
         self.fitnessSD = math.pow(self.fitnessSD, 0.5)
         
-        self.fitnessSDratio = self.fitnessSD / self.fitnessMean
-        if (self.fitnessSDratio > Evolution.maxSDration):
-            for individ in self.individs:
-                individ.fitness *= (Evolution.maxSDration / self.fitnessSDratio)
-        elif (self.fitnessSDratio < Evolution.minSDratio):
-            for individ in self.individs:
-                individ.fitness *= (Evolution.minSDration / self.fitnessSDratio)
+        #self.fitnessSDratio = self.fitnessSD / self.fitnessMean
+        #if (self.fitnessSDratio > Evolution.maxSDration):
+        #    for individ in self.individs:
+        #        individ.fitness *= (Evolution.maxSDration / self.fitnessSDratio)
+        #elif (self.fitnessSDratio < Evolution.minSDratio):
+        #    for individ in self.individs:
+        #        individ.fitness *= (Evolution.minSDration / self.fitnessSDratio)
 
         self.individs.sort(key=lambda individ: individ.fitness, reverse=True)
         
@@ -84,34 +100,62 @@ class Evolution:
         
         
     def mateSelection(self):
-        picked = []
+        self.expVal()
+        childPool = []
         for i in range(0, self.n):
             parents = []
             while len(parents) < self.p:
-                ticket = rnd.random() * self.fitnessMean * self.populationSize
+                ticket = rnd.random() * self.sumExpVal
                 for individ in self.individs:
-                    ticket -= individ.fitness
+                    ticket -= individ.expVal
                     if ticket <= 0:
-                        if parents.count(individ) == 0 and picked.count(individ) == 0:
+                        if parents.count(individ) == 0:
                             parents.append(individ)
                         break
             
-            child = self.individType(parents, self.gray)
-            self.individs.append(child)
+            child = self.individType(parents, Evolution.gray)
+            childPool.append(child)
 
-            picked.append(parents)
-        
+        for i in range (len(self.individs), round(len(self.individs) * (1 - Evolution.elitismFactor)), -1):
+            self.individs.pop()
+
+        self.individs.extend(childPool)
+
+    def expVal(self):
+        if Evolution.selectionStrategy == Evolution.SelectionStrategy.Sigma:
+            self.sigmaVal()
+        elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Boltz:
+            self.boltzVal()
+        elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Rank:
+            self.rankVal()
+
+        self.sumExpVal = 0
+        for individ in self.individs:
+            self.sumExpVal += individ.expVal
+
+    def sigmaVal(self):
+        for individ in self.individs:
+            individ.expVal = 1 + (individ.fitness - self.fitnessMean) / (2 * self.fitnessSD)
+
+    def boltzVal(self):
+        sumFitnessExp = 0
+        for individ in self.individs:
+            individ.fitnessExp = math.exp(individ.fitness/Evolution.Rank_T)
+            sumFitnessExp += individ.fitnessExp
+        avgFitnessExp = sumFitnessExp/len(self.individs)
+        for individ in self.individs:
+            individ.expVal = individ.fitnessExp / avgFitnessExp
+
+    def rankVal(self):
+        for i in range (0, len(self.individs)):
+            self.individs[i].expVal = Evolution.Rank_Min + (Evolution.Rank_Max - Evolution.Rank_Min) * (((len(self.individs) - 1) - i + 1) / (len(self.individs) - 1))
+
     def print(self):
         
         print ("Populationsize: " + str(len(self.individs)))
         print ("Mean fitness: " + str(round(self.fitnessMean, 2)))
         print ("SD in fitness: " + str(round(self.fitnessSD, 2)))
         print ("Best fitness: " + str(round(self.fitnessBest.fitness, 2)))
-
-class O:
-    def __init__(self):
-        self.a = "omg"
-        self.b = 4
 
 if __name__ == '__main__':
     #c = O()

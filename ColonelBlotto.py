@@ -1,5 +1,5 @@
 import math
-from Strategy import Strategy
+from Strategy import *
 from Evolution import Evolution
 #import pylab as p
 import matplotlib.pyplot as p
@@ -7,12 +7,13 @@ import numpy as np
 
 class ColonelBlotto(Evolution):
 
-    def __init__(self, gray = True, RF = 0.0, LF = 0.0, B = 10, m = 10, n = 20, p = 2):
-        super().__init__(gray, m, n, p)
-        self.RF = RF
-        self.LF = LF
-        self.B = B
-        Strategy.B = B
+    RF = 0.0
+    LF = 0.0
+    B = 10
+
+    def __init__(self):
+        super().__init__()
+        Strategy.B = ColonelBlotto.B
         for i in range (self.populationSize):
             self.individs.append(Strategy([], self.gray))
 
@@ -77,19 +78,16 @@ class ColonelBlotto(Evolution):
             resourceDistrib += str(pheno.val) + " | "
         resourceDistrib.strip()
         print (resourceDistrib)
-        
-        l1 = p.plot(colonelBlotto.meanFitness, 'b')
-        l2 = p.plot(colonelBlotto.SDinFitness, 'g')
-        l3 = p.plot (colonelBlotto.BestFitness, 'r')
-        
-        p.legend(('mean','SD','Best'))
-        p.xlabel('Generation')
-        p.ylabel('Value')
-        p.title('Graph')
-        p.grid(True)
-        p.savefig('Graph.png')
 
 if __name__ == '__main__':
-    colonelBlotto = ColonelBlotto(True, 1.0, 0.0)
-    p.savefig('Graph.png') #cler image
+    Evolution.gray = True
+    Evolution.m = 10
+    Evolution.n = 20
+    Evolution.p = 2
+
+    ColonelBlotto.RF = 1.0
+    ColonelBlotto.LF = 0.0
+    ColonelBlotto.B = 10
+
+    colonelBlotto = ColonelBlotto()
     colonelBlotto.run()

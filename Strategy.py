@@ -1,9 +1,9 @@
+from ColonelBlotto import ColonelBlotto
 from Individ import Individ
 
 class Strategy(Individ):
 
-    B = 10
-    Blueprint = [4] * B
+    Blueprint = [4] * ColonelBlotto.B
 
     def __init__(self, parents = [], gray = False):
         super().__init__(Strategy.Blueprint, parents, gray)
