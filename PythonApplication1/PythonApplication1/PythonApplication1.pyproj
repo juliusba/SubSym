@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>801d0b78-078a-46e6-8756-2f06343af395</ProjectGuid>
     <ProjectHome>..\..\</ProjectHome>
-    <StartupFile>ColonelBlotto.py</StartupFile>
+    <StartupFile>OneMax.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

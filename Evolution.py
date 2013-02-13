@@ -12,9 +12,10 @@ from Individ import Phenotype
 class Evolution:
 
     class SelectionStrategy:
-        Sigma = 1
-        Boltz = 2
-        Rank = 3
+        Fitness = 1
+        Sigma = 2
+        Boltz = 3
+        Rank = 4
 
     m = 5   #number of grownups for mateselection
     n = 20  #number of children in population
@@ -24,9 +25,9 @@ class Evolution:
     elitismFactor = 1.0
     tournamentCount = 1
 
-    selectionStrategy = SelectionStrategy.Sigma
+    selectionStrategy = SelectionStrategy.Boltz
     
-    Boltz_T = 2
+    Boltz_T = 100
     Rank_Min = 0.5
     Rank_Max = 1.5
 
@@ -75,23 +76,22 @@ class Evolution:
         self.fitnessSD = 0.0
         for individ in self.individs:
             individ.fitness = 0
-        #    individ.tested = False
+            individ.tested = False
 
-        #tested = 0
-        #for i in range (0, Evolution.tournamentCount):
-        #    contesters = []
-        #    for j in range (0, math.ceil(len(self.individs)/Evolution.tournamentCount)):
-        #        while True:
-        #            index = rnd.randint(0, len(self.individs) - 1)
-        #            if self.individs[index].tested == False:
-        #                break
-        #        contesters.append(self.individs[index])
-        #        self.individs[index].tested = True
-        #        tested += 1
-        #        if tested == len(self.individs):
-        #            break
-        #    self.fitnessTest(contesters)
-        self.fitnessTest(self.individs)
+        tested = 0
+        for i in range (0, Evolution.tournamentCount):
+            contesters = []
+            for j in range (0, math.ceil(len(self.individs)/Evolution.tournamentCount)):
+                while True:
+                    index = rnd.randint(0, len(self.individs) - 1)
+                    if self.individs[index].tested == False:
+                        break
+                contesters.append(self.individs[index])
+                self.individs[index].tested = True
+                tested += 1
+                if tested == len(self.individs):
+                    break
+            self.fitnessTest(contesters)
         self.fitnessBest = max(self.individs, key = attrgetter('fitness'))
         
         for i in range(0, len(self.individs)):
@@ -120,7 +120,9 @@ class Evolution:
         
         
     def mateSelection(self):
-        if Evolution.selectionStrategy == Evolution.SelectionStrategy.Sigma:
+        if Evolution.selectionStrategy == Evolution.SelectionStrategy.Fitness:
+            self.sigmaVal()
+        elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Sigma:
             self.sigmaVal()
         elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Boltz:
             self.boltzVal()
@@ -148,20 +150,23 @@ class Evolution:
             child = self.individType(parents, Evolution.gray)
             childPool.append(child)
 
-        for i in range (len(self.individs), round(len(self.individs) * (1 - Evolution.elitismFactor)), -1):
+        for i in range (0, round(len(self.individs) * (1 - Evolution.elitismFactor))):
             self.individs.pop()
 
         self.individs.extend(childPool)
 
+    def fitnessProportionate(self):
+        for individ in self.individs:
+            individ.expVal = individ.fitness
+
     def sigmaVal(self):
         for individ in self.individs:
-            individ.expVal = individ.fitness#(individ.fitness - self.fitnessMean) / (2 * self.fitnessSD)
-            #print(individ.expVal)
+            individ.expVal = (individ.fitness - self.fitnessMean) / (2 * self.fitnessSD)
 
     def boltzVal(self):
         sumFitnessExp = 0
         for individ in self.individs:
-            individ.fitnessExp = math.exp(individ.fitness/Evolution.Rank_T)
+            individ.fitnessExp = math.exp(individ.fitness/Evolution.Boltz_T)
             sumFitnessExp += individ.fitnessExp
         avgFitnessExp = sumFitnessExp/len(self.individs)
         for individ in self.individs:
