@@ -7,7 +7,7 @@ import numpy as np
 
 class ColonelBlotto(Evolution):
 
-    RF = 1.0
+    RF = 2.0
     LF = 0.0
     B = 10
 
@@ -25,7 +25,6 @@ class ColonelBlotto(Evolution):
                 res = self.runWar([individs[i], individs[j]])
                 if res == [0]:
                     individs[i].fitness += 2
-                    #print ( individs[i].dna[0].val - individs[j].dna[0].val)
                 elif res == [1]:
                     individs[j].fitness += 2
                 elif res == [0, 1]:
@@ -64,6 +63,18 @@ class ColonelBlotto(Evolution):
                 warWinners = [i]
             elif strategies[i].battlePoints == strategies[warWinners[0]].battlePoints:
                 warWinners.append(i)
+        #resourceDistrib = "\n| "
+        #for dis in strategies[0].resourceDistrib:
+        #    resourceDistrib += str(round(dis, 2)) + " | "
+        #resourceDistrib.strip()
+        #print (resourceDistrib)
+        #resourceDistrib = "| "
+        #for dis in strategies[1].resourceDistrib:
+        #    resourceDistrib += str(round(dis, 2)) + " | "
+        #resourceDistrib.strip()
+        #print (resourceDistrib)
+        #print ( warWinners[0])
+
         return warWinners
 
     def print(self):
@@ -85,12 +96,17 @@ class ColonelBlotto(Evolution):
 
 if __name__ == '__main__':
     Evolution.gray = True
+<<<<<<< HEAD
     Evolution.m = 3
     Evolution.n = 7
+=======
+    Evolution.m = 5
+    Evolution.n = 20
+>>>>>>> cb8b24fe83ae7e8ad891409dc8c7086a42781135
     Evolution.p = 2
 
-    ColonelBlotto.RF = 1.0
-    ColonelBlotto.LF = 0.0
+    ColonelBlotto.RF = 1.0000001
+    ColonelBlotto.LF = 0
     ColonelBlotto.B = 10
 
     colonelBlotto = ColonelBlotto()

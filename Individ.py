@@ -10,7 +10,7 @@ import sys
 
 class Individ(object):
 
-    mutationFraction = 0.01
+    mutationFraction = 0.05
 
     def __init__(self, blueprint, parents = [], gray = False):
         self.fitness = 0
