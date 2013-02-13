@@ -135,7 +135,7 @@ class Evolution:
             #print(str(individ.expVal) + " - " + str(individ.fitness))
 
         childPool = []
-        for i in range(0, self.n):
+        for i in range(0, round(self.n/self.p)):
             parents = []
             while len(parents) < self.p:
                 ticket = rnd.random() * self.sumExpVal
@@ -147,13 +147,38 @@ class Evolution:
                             parents.append(individ)
                         break
             
-            child = self.individType(parents, Evolution.gray)
-            childPool.append(child)
+            #child = self.individType(parents, Evolution.gray)
+            #childPool.append(child)
+            childPool.extend(self.mate(parents))
 
         for i in range (0, round(len(self.individs) * (1 - Evolution.elitismFactor))):
             self.individs.pop()
 
         self.individs.extend(childPool)
+
+    def mate(self, parents):
+        crossovers = []
+        parentIndex = 0
+        i = 0
+        for pheno in parents[0].dna:
+            crossovers.append([])
+            for j in range(0, len(pheno.genotype)):
+                if rnd.random() < Individ.crossoverRate:
+                    parentIndex = (parentIndex + 1) % len(parents)
+                crossovers[i].append(parentIndex)
+            i += 1
+        children = []
+        children.append(self.individType(parents, crossovers, Evolution.gray))
+        
+        for p in range(1, len(parents)):
+            i = 0
+            for pheno in parents[0].dna:
+                for j in range(0, len(pheno.genotype)):
+                    crossovers[i][j] = (crossovers[i][j] + 1) % len(parents)
+                i += 1
+            children.append(self.individType(parents, crossovers, Evolution.gray))
+        
+        return children
 
     def fitnessProportionate(self):
         for individ in self.individs:
