@@ -31,7 +31,8 @@ class ColonelBlotto(Evolution):
                     self.individs[i].fitness += 1
                     self.individs[j].fitness += 1
                 else:
-                    print ("OMGOMGOMGOMGOMGOMG")
+                    
+                    ("OMGOMGOMGOMGOMGOMG")
 
     def runWar(self, strategies):
         battlePoints = [0] * len(strategies)
@@ -63,8 +64,14 @@ class ColonelBlotto(Evolution):
     def print(self):
         super().print()
         resourceDistrib = "| "
+        entropy = 0
         for battleProportion in self.fitnessBest.resourceDistrib:
             resourceDistrib += str(round(battleProportion, 2)) + " | "
+
+            entropy -= battleProportion * (math.log(battleProportion, 2))
+        print (str(entropy))
+
+
         resourceDistrib += "\n| "
         for pheno in self.fitnessBest.dna:
             resourceDistrib += str(pheno.val) + " | "
