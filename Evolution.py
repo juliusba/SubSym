@@ -28,7 +28,7 @@ class Evolution:
     elitismFactor = 0.0
     tournamentCount = 1
 
-    selectionStrategy = SelectionStrategy.Fitness
+    selectionStrategy = SelectionStrategy.Sigma
     
     Boltz_T = 100
     Rank_Min = 0.5
@@ -208,7 +208,7 @@ class Evolution:
 
     def sigmaVal(self):
         for individ in self.individs:
-            individ.expVal = 1 + ((individ.fitness - self.fitnessMean) / (2 * self.fitnessSD))
+            individ.expVal = 1 + ((individ.fitness - self.fitnessMean) / max(2 * self.fitnessSD, 0.0001))
             individ.expVal = max(0, individ.expVal)
 
     def boltzVal(self):
