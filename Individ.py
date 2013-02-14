@@ -10,9 +10,10 @@ import sys
 
 class Individ(object):
 
-    mutationFraction = 0.05
-
-    def __init__(self, blueprint, parents = [], gray = False):
+    mutationRate = 0.05
+    crossoverRate = 0.3
+    
+    def __init__(self, blueprint, parents = [], crossovers = [], gray = False):
         self.fitness = 0
         self.dna = []
         if parents == []:
@@ -23,21 +24,21 @@ class Individ(object):
                 parentsPheno = []
                 for j in range (0,len(parents)):
                     parentsPheno.append(parents[j].dna[i])
-                self.dna.append(Phenotype(blueprint[i], parentsPheno, gray))
+                self.dna.append(Phenotype(blueprint[i], parentsPheno, crossovers[i], gray))
 
 class Phenotype:
 
-    def __init__(self, bits, parents = [], gray = False):
+    def __init__(self, bits, parents = [], crossovers = [], gray = False):
         self.genotype = []
         if parents == []:
             for i in range (0, bits):
                 self.genotype.append(random.randint(0,1))
         else:
             for i in range (0, bits):
-                if random.random() < Individ.mutationFraction:
+                if random.random() < Individ.mutationRate:
                     self.genotype.append(random.randint(0,1))
                 else:
-                    self.genotype.append(parents[random.randint(0, len(parents)-1)].genotype[i])
+                    self.genotype.append(parents[crossovers[i]].genotype[i])
         if gray:
             self.val = Phenotype.grayToInteger(self.genotype)
         else:

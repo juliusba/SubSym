@@ -17,17 +17,17 @@ class Evolution:
         Boltz = 3
         Rank = 4
 
-    m = 5   #number of grownups for mateselection
-    n = 20  #number of children in population
+    m = 25  #number of grownups for mateselection
+    n = 25  #number of children in population
     p = 2   #number of parents per child
     
     gray = False
-    elitismFactor = 1.0
+    elitismFactor = 0.0
     tournamentCount = 1
 
-    selectionStrategy = SelectionStrategy.Boltz
+    selectionStrategy = SelectionStrategy.Rank
     
-    Boltz_T = 100
+    Boltz_T = 2
     Rank_Min = 0.5
     Rank_Max = 1.5
 
@@ -121,7 +121,7 @@ class Evolution:
         
     def mateSelection(self):
         if Evolution.selectionStrategy == Evolution.SelectionStrategy.Fitness:
-            self.sigmaVal()
+            self.fitnessProportionate()
         elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Sigma:
             self.sigmaVal()
         elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Boltz:
@@ -135,7 +135,7 @@ class Evolution:
             #print(str(individ.expVal) + " - " + str(individ.fitness))
 
         childPool = []
-        for i in range(0, self.n):
+        for i in range(0, round(self.n/self.p)):
             parents = []
             while len(parents) < self.p:
                 ticket = rnd.random() * self.sumExpVal
@@ -147,13 +147,38 @@ class Evolution:
                             parents.append(individ)
                         break
             
-            child = self.individType(parents, Evolution.gray)
-            childPool.append(child)
+            #child = self.individType(parents, Evolution.gray)
+            #childPool.append(child)
+            childPool.extend(self.mate(parents))
 
         for i in range (0, round(len(self.individs) * (1 - Evolution.elitismFactor))):
             self.individs.pop()
 
         self.individs.extend(childPool)
+
+    def mate(self, parents):
+        crossovers = []
+        parentIndex = 0
+        i = 0
+        for pheno in parents[0].dna:
+            crossovers.append([])
+            for j in range(0, len(pheno.genotype)):
+                if rnd.random() < Individ.crossoverRate:
+                    parentIndex = (parentIndex + 1) % len(parents)
+                crossovers[i].append(parentIndex)
+            i += 1
+        children = []
+        children.append(self.individType(parents, crossovers, Evolution.gray))
+        
+        for p in range(1, len(parents)):
+            i = 0
+            for pheno in parents[0].dna:
+                for j in range(0, len(pheno.genotype)):
+                    crossovers[i][j] = (crossovers[i][j] + 1) % len(parents)
+                i += 1
+            children.append(self.individType(parents, crossovers, Evolution.gray))
+        
+        return children
 
     def fitnessProportionate(self):
         for individ in self.individs:

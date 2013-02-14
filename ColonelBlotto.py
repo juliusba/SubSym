@@ -96,13 +96,9 @@ class ColonelBlotto(Evolution):
 
 if __name__ == '__main__':
     Evolution.gray = True
-<<<<<<< HEAD
-    Evolution.m = 3
-    Evolution.n = 7
-=======
+
     Evolution.m = 5
     Evolution.n = 20
->>>>>>> cb8b24fe83ae7e8ad891409dc8c7086a42781135
     Evolution.p = 2
 
     ColonelBlotto.RF = 1.0000001
