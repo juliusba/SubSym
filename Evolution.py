@@ -29,11 +29,8 @@ class Evolution:
     elitismFactor = 0.0
     tournamentCount = 1
 
-<<<<<<< HEAD
+
     selectionStrategy = SelectionStrategy.Rank
-=======
-    selectionStrategy = SelectionStrategy.Sigma
->>>>>>> 9464ad9e2c6e43ee860d4585da2781b2eea7a0aa
     
     Boltz_T = 2
     Rank_Min = 0.5

@@ -10,7 +10,7 @@ import sys
 
 class Individ(object):
 
-    mutationRate = 0.00
+    mutationRate = 0.03
     crossoverRate = 0.3
     
     def __init__(self, blueprint, parents = [], crossovers = [], gray = False):
