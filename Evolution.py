@@ -17,15 +17,16 @@ class Evolution:
         Boltz = 3
         Rank = 4
 
-    m = 25  #number of grownups for mateselection
-    n = 25  #number of children in population
+
+    m = 128   #number of grownups for mateselection
+    n = 128  #number of children in population
     p = 2   #number of parents per child
     
     gray = False
     elitismFactor = 0.0
     tournamentCount = 1
 
-    selectionStrategy = SelectionStrategy.Rank
+    selectionStrategy = SelectionStrategy.Fitness
     
     Boltz_T = 2
     Rank_Min = 0.5
@@ -183,10 +184,12 @@ class Evolution:
     def fitnessProportionate(self):
         for individ in self.individs:
             individ.expVal = individ.fitness
+            #print(individ.expVal)
 
     def sigmaVal(self):
         for individ in self.individs:
-            individ.expVal = (individ.fitness - self.fitnessMean) / (2 * self.fitnessSD)
+            individ.expVal = 1 + ((individ.fitness - self.fitnessMean) / (2 * self.fitnessSD))
+            individ.expVal = max(0, individ.expVal)
 
     def boltzVal(self):
         sumFitnessExp = 0

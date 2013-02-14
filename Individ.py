@@ -10,8 +10,8 @@ import sys
 
 class Individ(object):
 
-    mutationRate = 0.05
-    crossoverRate = 0.3
+    mutationRate = 0.0
+    crossoverRate = 3.0
     
     def __init__(self, blueprint, parents = [], crossovers = [], gray = False):
         self.fitness = 0
