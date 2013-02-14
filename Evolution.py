@@ -12,10 +12,13 @@ from Individ import Phenotype
 class Evolution:
 
     class SelectionStrategy:
+        #Global 1 - 10
         Fitness = 1
         Sigma = 2
         Boltz = 3
         Rank = 4
+        #Local 11 - 20
+        Tournament = 11
 
     m = 100   #number of grownups for mateselection
     n = 100  #number of children in population
@@ -30,7 +33,10 @@ class Evolution:
     Boltz_T = 100
     Rank_Min = 0.5
     Rank_Max = 1.5
+    TournamentE = 0.1
+    TournamentK = 4
 
+    noVarShown = False
 
     def __init__(self):
         self.individs = []
@@ -76,7 +82,7 @@ class Evolution:
         self.fitnessSD = 0.0
         for individ in self.individs:
             individ.fitness = 0
-            individ.tested = False
+            individ.tournamentNr = -1
 
         tested = 0
         for i in range (0, Evolution.tournamentCount):
@@ -84,10 +90,10 @@ class Evolution:
             for j in range (0, math.ceil(len(self.individs)/Evolution.tournamentCount)):
                 while True:
                     index = rnd.randint(0, len(self.individs) - 1)
-                    if self.individs[index].tested == False:
+                    if self.individs[index].tournamentNr == -1:
                         break
                 contesters.append(self.individs[index])
-                self.individs[index].tested = True
+                self.individs[index].tournamentNr = j
                 tested += 1
                 if tested == len(self.individs):
                     break
@@ -101,8 +107,9 @@ class Evolution:
             self.fitnessSD += math.pow((self.individs[i].fitness - self.fitnessMean), 2)
         self.fitnessSD /= len(self.individs)
         self.fitnessSD = math.pow(self.fitnessSD, 0.5)
-        if self.fitnessSD == 0:
+        if self.fitnessSD == 0 and not Evolution.noVarShown:
             print("No variation in fitness!")
+            Evolution.noVarShown = True
             sys.stdin.readline()
 
         #self.fitnessSDratio = self.fitnessSD / self.fitnessMean
@@ -120,32 +127,46 @@ class Evolution:
         
         
     def mateSelection(self):
-        if Evolution.selectionStrategy == Evolution.SelectionStrategy.Fitness:
-            self.fitnessProportionate()
-        elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Sigma:
-            self.sigmaVal()
-        elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Boltz:
-            self.boltzVal()
-        elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Rank:
-            self.rankVal()
+        if Evolution.selectionStrategy <= 10:
+            if Evolution.selectionStrategy == Evolution.SelectionStrategy.Fitness:
+                self.fitnessProportionate()
+            elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Sigma:
+                self.sigmaVal()
+            elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Boltz:
+                self.boltzVal()
+            elif Evolution.selectionStrategy == Evolution.SelectionStrategy.Rank:
+                self.rankVal()
 
-        self.sumExpVal = 0
-        for individ in self.individs:
-            self.sumExpVal += individ.expVal
-            #print(str(individ.expVal) + " - " + str(individ.fitness))
+            self.sumExpVal = 0
+            for individ in self.individs:
+                self.sumExpVal += individ.expVal
 
         childPool = []
         for i in range(0, round(self.n/self.p)):
             parents = []
             while len(parents) < self.p:
-                ticket = rnd.random() * self.sumExpVal
-                #print(ticket)
-                for individ in self.individs:
-                    ticket -= individ.expVal
-                    if ticket <= 0:
-                        if parents.count(individ) == 0:
-                            parents.append(individ)
-                        break
+                
+                if Evolution.selectionStrategy > 10:
+                    contesters = []
+                    for j in range (0, Evolution.TournamentK):
+                        while True:
+                            index = rnd.randint(0, len(self.individs) - 1)
+                            if contesters.count(self.individs[index]) == 0:
+                                break
+                        contesters.append(self.individs[index])
+                    if rnd.random() < Evolution.TournamentE:
+                        parents.append(contesters[rnd.randint(0, len(contesters) - 1)])
+                    else:
+                        parents.append(max(contesters, key = attrgetter('fitness')))
+
+                else:
+                    ticket = rnd.random() * self.sumExpVal
+                    for individ in self.individs:
+                        ticket -= individ.expVal
+                        if ticket <= 0:
+                            if parents.count(individ) == 0:
+                                parents.append(individ)
+                            break
             
             #child = self.individType(parents, Evolution.gray)
             #childPool.append(child)
