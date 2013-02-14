@@ -57,23 +57,31 @@ class Evolution:
             for i in range (int(answer)):
                 print(str(round(i*100/int(answer))), end=" %\r")
                 self.generationStep()
-                self.meanFitness.append(str(round(self.fitnessMean, 2)))
-                self.SDinFitness.append(str(round(self.fitnessSD, 2)))
-                self.BestFitness.append(str(round(self.fitnessBest.fitness, 2)))
+                self.saveData()
+                if i % 1 == 0:
+                    self.print()
 
-            l1 = p.plot(self.meanFitness, 'b')
-            l2 = p.plot(self.SDinFitness, 'g')
-            l3 = p.plot (self.BestFitness, 'r')
-        
-            p.legend(('mean','SD','Best'))
-            p.xlabel('Generation')
-            p.ylabel('Value')
-            p.title('Graph')
-            p.grid(True)
-            p.savefig('Graph.png')
-
+            self.plot()
             self.print()
             self.run()
+
+    def saveData(self):
+        self.meanFitness.append(str(round(self.fitnessMean, 2)))
+        self.SDinFitness.append(str(round(self.fitnessSD, 2)))
+        self.BestFitness.append(str(round(self.fitnessBest.fitness, 2)))
+
+    def plot(self):
+        p.plot(self.meanFitness, 'b')
+        p.plot(self.SDinFitness, 'g')
+        p.plot(self.BestFitness, 'r')
+        #p.plot(self.avgEntropy, 'brown')
+
+        p.legend(('mean','SD','Best', 'Entropy'))
+        p.xlabel('Generation')
+        p.ylabel('Value')
+        p.title('Graph')
+        p.grid(True)
+        p.savefig('Graph.png')
 
     def generationStep(self):
         self.adultSelection()
@@ -227,16 +235,11 @@ class Evolution:
             self.individs[i].expVal = Evolution.Rank_Min + (Evolution.Rank_Max - Evolution.Rank_Min) * (((len(self.individs) - 1) - i + 1) / (len(self.individs) - 1))
 
     def print(self):
-        
-        print ("Populationsize: " + str(len(self.individs)))
-        print ("Mean fitness: " + str(round(self.fitnessMean, 2)))
-        print ("SD in fitness: " + str(round(self.fitnessSD, 2)))
-        print ("Best fitness: " + str(round(self.fitnessBest.fitness, 2)))
+        pass
+        #print ("Populationsize: " + str(len(self.individs)))
+        #print ("Mean fitness: " + str(round(self.fitnessMean, 2)))
+        #print ("SD in fitness: " + str(round(self.fitnessSD, 2)))
+        #print ("Best fitness: " + str(round(self.fitnessBest.fitness, 2)))
 
 if __name__ == '__main__':
-    #c = O()
-    ##json.dumps(c, default=lambda o: o.__dict__)
-    #data = [ { 'a':'A', 'b':(2, 4), 'c':3.0 } ]
-    #with io.open('data.txt', 'w', encoding='utf-8') as outfile:
-    #    json.dump(c, outfile)
     sys.stdin.readline()
