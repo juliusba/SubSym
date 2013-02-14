@@ -1,10 +1,11 @@
 from Evolution import Evolution
 from BinaryVector import BinaryVector
 import matplotlib.pyplot as p
+import random
 
 class OneMax(Evolution):
     
-
+    Target = [1] * BinaryVector.blueprint[0]
 
     def __init__(self):
         super().__init__()
