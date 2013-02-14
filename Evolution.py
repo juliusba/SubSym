@@ -29,7 +29,7 @@ class Evolution:
     elitismFactor = 0.0
     tournamentCount = 1
 
-    selectionStrategy = SelectionStrategy.Fitness
+    selectionStrategy = SelectionStrategy.Rank
     
     Boltz_T = 2
     Rank_Min = 0.5
